@@ -28,15 +28,21 @@ const mantleTestnet = defineChain({
   testnet: true,
 })
 
+// Only include WalletConnect if project ID is properly configured
+const getConnectors = () => {
+  const connectors = [injected(), metaMask()]
+  
+  const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+  if (projectId && projectId !== 'your_project_id_here' && projectId.trim() !== '') {
+    connectors.push(walletConnect({ projectId }))
+  }
+  
+  return connectors
+}
+
 const config = createConfig({
   chains: [mantleTestnet],
-  connectors: [
-    injected(),
-    metaMask(),
-    walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
-    }),
-  ],
+  connectors: getConnectors(),
   transports: {
     [mantleTestnet.id]: http(),
   },

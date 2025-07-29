@@ -44,6 +44,7 @@ export default function Home() {
 
           <div className="flex justify-center">
             <SignUp 
+              routing="hash"
               appearance={{
                 elements: {
                   formButtonPrimary: 

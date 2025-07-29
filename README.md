@@ -18,6 +18,8 @@ All core pages and components have been implemented with static UI and full navi
 
 #### Pages
 - **Landing Page** (`/`): Split-screen design with feature highlights and Clerk SignUp component
+- **Sign In** (`/sign-in/[[...sign-in]]`): Dedicated sign-in page with Clerk SignIn component and centered layout
+- **Sign Up** (`/sign-up/[[...sign-up]]`): Dedicated sign-up page with Clerk SignUp component and centered layout
 - **Complete Profile** (`/onboarding/complete-profile`): Avatar upload, name, website, and about sections with navigation to payout setup
 - **Payout Method** (`/onboarding/payout-method`): Wallet connection interface with Mantle network info and navigation to dashboard
 - **Creator Dashboard** (`/dashboard`): Balance display, recent tips table, withdraw functionality, and navigation to settings
@@ -57,9 +59,9 @@ Authentication and Web3 infrastructure has been fully implemented:
 - **Conditional Clerk Integration**: ConditionalClerkProvider handles authentication with build-time safety
 - **Build-Safe Authentication**: Automatically detects invalid/placeholder keys and gracefully degrades during builds
 - **Protected Routes**: Async middleware protecting `/onboarding/*` and `/dashboard/*` routes with `await auth.protect()`
-- **Public Routes**: Landing page (`/`), embed widgets (`/embed/*`), and API routes (`/api/relay-tip`) remain accessible
-- **Sign-up Flow**: Clerk SignUp component integrated in landing page with custom styling
-- **Route Matching**: Uses `createRouteMatcher` for efficient public route detection
+- **Public Routes**: Landing page (`/`), sign-in (`/sign-in/*`), sign-up (`/sign-up/*`), embed widgets (`/embed/*`), and API routes (`/api/relay-tip`) remain accessible
+- **Authentication Pages**: Dedicated sign-in and sign-up routes with Clerk components and custom styling
+- **Route Matching**: Uses `createRouteMatcher` for efficient public route detection with regex patterns
 
 #### Web3 Infrastructure
 - **Wagmi Configuration**: Complete Web3 provider setup with Mantle Testnet support
@@ -91,9 +93,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - **Redirect URLs**: Post-authentication routing to onboarding flow
 
 #### Build Configuration
-- **Static Optimization Disabled**: Configured to prevent Clerk authentication build errors
-- **Server-Side Rendering**: All pages forced to server-side rendering with `forceSwcTransforms: true`
-- **Static Generation Disabled**: `generateStaticParams: false` to avoid static generation conflicts with authentication
+- **Simplified Configuration**: Streamlined Next.js config with minimal experimental settings
+- **CSR Bailout Handling**: Configured `missingSuspenseWithCSRBailout: false` to handle client-side rendering edge cases
+- **Dynamic Rendering**: Pages use dynamic rendering to ensure proper authentication integration
 
 #### Authenticated Components
 - **Dashboard Integration**: Dashboard page uses Clerk's `useUser` hook with proper loading and authentication states
@@ -134,6 +136,10 @@ app/
 ├── page.tsx                           # Landing page with sign-up
 ├── layout.tsx                         # Root layout with global styles
 ├── globals.css                        # Global CSS with Tailwind
+├── sign-in/
+│   └── [[...sign-in]]/page.tsx        # Clerk sign-in page
+├── sign-up/
+│   └── [[...sign-up]]/page.tsx        # Clerk sign-up page
 ├── onboarding/
 │   ├── complete-profile/page.tsx      # Profile setup form
 │   └── payout-method/page.tsx         # Wallet connection setup
@@ -144,6 +150,9 @@ app/
     └── [creatorId]/page.tsx           # Embeddable tip widget
 
 components/
+├── providers/                         # Context providers
+│   ├── ConditionalClerkProvider.tsx   # Build-safe Clerk provider
+│   └── Web3Provider.tsx               # Wagmi Web3 provider
 └── ui/                                # Shadcn/ui components
     ├── button.tsx
     ├── input.tsx
