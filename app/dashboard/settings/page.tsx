@@ -2,15 +2,17 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Copy, Check, Code } from "lucide-react"
 
 export default function Settings() {
   const [copied, setCopied] = useState(false)
+  const { user, isLoaded } = useUser()
   
-  // Mock creator ID - in real app this would come from authentication
-  const creatorId = "creator-123"
+  // Use actual user ID from Clerk authentication
+  const creatorId = user?.id || "loading"
   
   // Generate embed code with creator ID
   const embedCode = `<iframe 
@@ -22,6 +24,8 @@ export default function Settings() {
 </iframe>`
 
   const handleCopyCode = async () => {
+    if (!isLoaded || !user) return
+    
     try {
       await navigator.clipboard.writeText(embedCode)
       setCopied(true)
@@ -29,6 +33,32 @@ export default function Settings() {
     } catch (err) {
       console.error('Failed to copy embed code:', err)
     }
+  }
+
+  // Show loading state while user data is being fetched
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-gray-600">Loading...</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state if user is not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-red-600">Please sign in to access settings.</div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
