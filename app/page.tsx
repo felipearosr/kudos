@@ -2,6 +2,9 @@ import { SignUp } from "@clerk/nextjs"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Coins, Zap, Globe, Shield } from "lucide-react"
 
+// Force dynamic rendering to avoid build-time Clerk errors
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   return (
     <div className="min-h-screen flex">

@@ -1,14 +1,15 @@
-import { authMiddleware } from "@clerk/nextjs";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default authMiddleware({
-  // Routes that can be accessed while signed out
-  publicRoutes: [
-    "/",
-    "/embed/(.*)",
-    "/api/relay-tip"
-  ],
-  // Routes that require authentication
-  ignoredRoutes: [],
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/embed/(.*)",
+  "/api/relay-tip"
+]);
+
+export default clerkMiddleware(async (auth, request) => {
+  if (!isPublicRoute(request)) {
+    await auth.protect();
+  }
 });
 
 export const config = {

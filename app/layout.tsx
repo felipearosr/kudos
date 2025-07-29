@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ClerkProvider } from '@clerk/nextjs'
+import { ConditionalClerkProvider } from '@/components/providers/ConditionalClerkProvider'
 import { Web3Provider } from '@/components/providers/Web3Provider'
 import './globals.css'
 
@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
+    <ConditionalClerkProvider>
       <html lang="en">
         <body className={inter.className}>
           <Web3Provider>
@@ -25,6 +25,6 @@ export default function RootLayout({
           </Web3Provider>
         </body>
       </html>
-    </ClerkProvider>
+    </ConditionalClerkProvider>
   )
 }

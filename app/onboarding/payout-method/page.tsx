@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Wallet, Shield, Zap, ArrowRight } from "lucide-react"
 
+// Force dynamic rendering to avoid build-time Clerk errors
+export const dynamic = 'force-dynamic'
+
 export default function PayoutMethod() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -63,7 +66,7 @@ export default function PayoutMethod() {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-medium text-blue-900 mb-2">Mantle Network Setup</h4>
               <p className="text-sm text-blue-700 mb-3">
-                Make sure your wallet is connected to the Mantle Testnet. We'll help you add it if needed.
+                Make sure your wallet is connected to the Mantle Testnet. We&apos;ll help you add it if needed.
               </p>
               <div className="text-xs text-blue-600 space-y-1">
                 <div><strong>Network:</strong> Mantle Testnet</div>

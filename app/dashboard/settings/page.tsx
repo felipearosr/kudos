@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+
+// Force dynamic rendering to avoid build-time Clerk errors
+export const dynamic = 'force-dynamic'
 import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
@@ -132,10 +135,10 @@ export default function Settings() {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <h3 className="font-semibold text-blue-900 mb-2">How to use:</h3>
                 <ul className="text-sm text-blue-800 space-y-1">
-                  <li>• Paste this code into your website's HTML</li>
+                  <li>• Paste this code into your website&apos;s HTML</li>
                   <li>• Add it to your blog sidebar or footer</li>
                   <li>• Include it in your social media bio links</li>
-                  <li>• The widget will display a "Tip Me on Mantle" button</li>
+                  <li>• The widget will display a &quot;Tip Me on Mantle&quot; button</li>
                 </ul>
               </div>
             </div>

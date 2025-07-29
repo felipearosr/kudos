@@ -15,6 +15,9 @@ import {
 import { Settings, Wallet } from "lucide-react"
 import { useState } from "react"
 
+// Force dynamic rendering to avoid build-time Clerk errors
+export const dynamic = 'force-dynamic'
+
 // Hardcoded data for recent tips (replacing mock data)
 const recentTips = [
   {

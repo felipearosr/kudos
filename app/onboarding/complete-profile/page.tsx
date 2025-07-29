@@ -6,6 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, User } from "lucide-react"
 
+// Force dynamic rendering to avoid build-time Clerk errors
+export const dynamic = 'force-dynamic'
+
 export default function CompleteProfile() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
