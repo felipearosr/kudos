@@ -1,4 +1,7 @@
+'use client'
+
 import Link from "next/link"
+import { useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -10,9 +13,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Settings, Wallet } from "lucide-react"
+import { useState } from "react"
 
-// Mock data for recent tips
-const mockTips = [
+// Hardcoded data for recent tips (replacing mock data)
+const recentTips = [
   {
     id: "1",
     senderAddress: "0x1234...5678",
@@ -46,7 +50,46 @@ const mockTips = [
 ]
 
 export default function Dashboard() {
-  const claimableBalance = "0.45" // Mock claimable balance
+  const { user, isLoaded } = useUser()
+  const [isWithdrawing, setIsWithdrawing] = useState(false)
+  
+  // Hardcoded claimable balance
+  const claimableBalance = "0.45"
+
+  const handleWithdraw = async () => {
+    setIsWithdrawing(true)
+    console.log("Withdraw initiated for user:", user?.id)
+    console.log("Withdrawing balance:", claimableBalance, "MNT")
+    
+    // Simulate withdrawal process
+    setTimeout(() => {
+      console.log("Withdrawal successful!")
+      setIsWithdrawing(false)
+      // In a real implementation, this would show a success toast
+      alert("Withdrawal successful! Funds have been transferred to your wallet.")
+    }, 2000)
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please sign in to access your dashboard.</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -86,8 +129,12 @@ export default function Dashboard() {
                   ≈ ${(parseFloat(claimableBalance) * 0.65).toFixed(2)} USD
                 </p>
               </div>
-              <Button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
-                Withdraw Funds
+              <Button 
+                className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+                onClick={handleWithdraw}
+                disabled={isWithdrawing}
+              >
+                {isWithdrawing ? "Processing..." : "Withdraw Funds"}
               </Button>
             </div>
           </CardContent>
@@ -112,7 +159,7 @@ export default function Dashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockTips.map((tip) => (
+                {recentTips.map((tip) => (
                   <TableRow key={tip.id}>
                     <TableCell className="font-mono text-sm">
                       {tip.senderAddress}
@@ -133,7 +180,7 @@ export default function Dashboard() {
               </TableBody>
             </Table>
             
-            {mockTips.length === 0 && (
+            {recentTips.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <p>No tips received yet</p>
                 <p className="text-sm mt-1">Share your embed code to start receiving tips!</p>

@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SignUp } from "@clerk/nextjs"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Coins, Zap, Globe, Shield } from "lucide-react"
 
 export default function Home() {
@@ -40,25 +39,16 @@ export default function Home() {
             <p className="text-gray-600">Create your tip jar and start earning</p>
           </div>
 
-          <div className="space-y-6">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                Choose your username
-              </label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="your-username"
-                className="w-full"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Your tip jar will be available at: mantle-tip-jar.com/your-username
-              </p>
-            </div>
-
-            <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3">
-              Create My Tip Jar
-            </Button>
+          <div className="flex justify-center">
+            <SignUp 
+              appearance={{
+                elements: {
+                  formButtonPrimary: 
+                    "bg-yellow-400 hover:bg-yellow-500 text-black font-semibold",
+                  card: "shadow-none border-0",
+                }
+              }}
+            />
           </div>
 
           {/* Feature Highlight Cards */}
