@@ -17,7 +17,7 @@ A decentralized application (dApp) that enables content creators to receive cryp
 All core pages and components have been implemented with static UI and full navigation:
 
 #### Pages
-- **Landing Page** (`/`): Split-screen design with feature highlights and Clerk SignUp component
+- **Landing Page** (`/`): Split-screen design with feature highlights and custom sign-up button linking to dedicated sign-up page
 - **Sign In** (`/sign-in/[[...sign-in]]`): Dedicated sign-in page with Clerk SignIn component and centered layout
 - **Sign Up** (`/sign-up/[[...sign-up]]`): Dedicated sign-up page with Clerk SignUp component and centered layout
 - **Complete Profile** (`/onboarding/complete-profile`): Avatar upload, name, website, and about sections with navigation to payout setup
@@ -62,6 +62,7 @@ Authentication and Web3 infrastructure has been fully implemented:
 - **Public Routes**: Landing page (`/`), sign-in (`/sign-in/*`), sign-up (`/sign-up/*`), embed widgets (`/embed/*`), and API routes (`/api/relay-tip`) remain accessible
 - **Authentication Pages**: Dedicated sign-in and sign-up routes with Clerk components and custom styling
 - **Route Matching**: Uses `createRouteMatcher` for efficient public route detection with regex patterns
+- **Onboarding Flow Integration**: Custom sign-up flow with dedicated authentication pages and automatic redirection to `/onboarding/complete-profile` after successful registration
 
 #### Web3 Infrastructure
 - **Wagmi Configuration**: Complete Web3 provider setup with Mantle Testnet support
@@ -100,7 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 #### Authenticated Components
 - **Dashboard Integration**: Dashboard page uses Clerk's `useUser` hook with proper loading and authentication states
 - **Settings Page**: Fully integrated with Clerk authentication, generates dynamic embed codes using real user IDs
-- **Landing Page**: Configured with `export const dynamic = 'force-dynamic'` to prevent build-time Clerk errors with SignUp component
+- **Landing Page**: Configured with `export const dynamic = 'force-dynamic'` and uses custom navigation buttons to direct users to dedicated authentication pages
 - **Dynamic Rendering**: Both settings page and landing page use dynamic rendering to ensure proper Clerk integration
 - **User Session Management**: Real user data integration with hardcoded balance and tips data for development
 - **Withdraw Simulation**: Console logging and alert-based withdrawal simulation for testing

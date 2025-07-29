@@ -3,7 +3,8 @@
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { defineChain } from 'viem'
-import { injected, metaMask, walletConnect } from 'wagmi/connectors'
+import { injected, metaMask } from 'wagmi/connectors'
+import { walletConnect } from 'wagmi/connectors'
 
 // Define Mantle Testnet
 const mantleTestnet = defineChain({

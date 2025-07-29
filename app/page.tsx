@@ -1,4 +1,3 @@
-import { SignUp } from "@clerk/nextjs"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Coins, Zap, Globe, Shield } from "lucide-react"
 
@@ -43,16 +42,20 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center">
-            <SignUp 
-              routing="hash"
-              appearance={{
-                elements: {
-                  formButtonPrimary: 
-                    "bg-yellow-400 hover:bg-yellow-500 text-black font-semibold",
-                  card: "shadow-none border-0",
-                }
-              }}
-            />
+            <div className="w-full max-w-sm">
+              <a 
+                href="/sign-up"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg text-center block transition-colors"
+              >
+                Create Your Tip Jar
+              </a>
+              <p className="text-center text-sm text-gray-600 mt-4">
+                Already have an account?{' '}
+                <a href="/sign-in" className="text-yellow-600 hover:text-yellow-700 font-medium">
+                  Sign in
+                </a>
+              </p>
+            </div>
           </div>
 
           {/* Feature Highlight Cards */}
