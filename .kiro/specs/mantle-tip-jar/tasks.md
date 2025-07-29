@@ -30,24 +30,24 @@
   - Add skip option with navigation to dashboard page
   - _Requirements: 1.4, 1.5_
 
-- [ ] 2. Phase 0: Static Dashboard and Embed Components
+- [x] 2. Phase 0: Static Dashboard and Embed Components
   - Create static dashboard interface and embeddable tip widget
   - Build complete user interface without functionality
   - _Requirements: 2.1, 2.2, 3.1_
 
-- [ ] 2.1 Build static creator dashboard page
+- [x] 2.1 Build static creator dashboard page
   - Create app/dashboard/page.tsx with claimable balance display
   - Implement recent tips table with mock data using Shadcn Table component
   - Add withdraw funds button and navigation to settings
   - _Requirements: 2.1, 2.2_
 
-- [ ] 2.2 Create settings page with embed code display
+- [x] 2.2 Create settings page with embed code display
   - Build app/dashboard/settings/page.tsx with iframe code snippet
   - Implement copy-to-clipboard functionality for embed code
   - Style code block with syntax highlighting and copy button
   - _Requirements: 2.4, 2.5_
 
-- [ ] 2.3 Build embeddable tip widget page
+- [x] 2.3 Build embeddable tip widget page
   - Create app/embed/[creatorId]/page.tsx with dynamic routing
   - Implement "Tip Me on Mantle" button with branded styling
   - Build tip modal using Shadcn Dialog component with amount input and wallet connection UI
