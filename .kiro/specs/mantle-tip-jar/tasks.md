@@ -165,31 +165,31 @@
   - Ensure proper error responses for all failure scenarios
   - _Requirements: 5.4, 4.4_
 
-- [ ] 7. Phase 2: Frontend Integration with Live Blockchain
+- [x] 7. Phase 2: Frontend Integration with Live Blockchain
   - Connect frontend components to real smart contract and relay service
   - Replace mock data with live blockchain interactions
   - _Requirements: 2.1, 2.3, 4.1, 4.2, 4.5, 4.6_
 
-- [ ] 7.1 Update tip modal with real EIP-712 signing
+- [x] 7.1 Update tip modal with real EIP-712 signing
   - Replace console.log simulation with actual EIP-712 typed data construction
   - Implement useSignTypedData hook from Wagmi for signature requests
   - Add proper error handling for signature rejection and wallet errors
   - _Requirements: 4.1, 4.2_
 
-- [ ] 7.2 Connect tip modal to live relay service
+- [x] 7.2 Connect tip modal to live relay service
   - Replace setTimeout simulation with real fetch call to /api/relay-tip
   - Send signature and message payload in POST request body
   - Handle API response success/failure and update UI accordingly
   - Display transaction hash and confirmation status to user
   - _Requirements: 4.3, 4.4, 4.5, 4.6_
 
-- [ ] 7.3 Update dashboard with live smart contract data
+- [x] 7.3 Update dashboard with live smart contract data
   - Replace hardcoded balance with useReadContract hook to call getClaimableBalance
   - Connect to deployed TipJar contract using contract address from environment
   - Handle loading states and error conditions for contract reads
   - _Requirements: 2.1, 5.2_
 
-- [ ] 7.4 Implement live withdraw functionality
+- [x] 7.4 Implement live withdraw functionality
   - Replace console.log withdraw with useWriteContract hook
   - Call withdraw function on TipJar smart contract
   - Handle transaction confirmation and update balance display

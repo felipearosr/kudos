@@ -4,12 +4,13 @@ A decentralized application (dApp) that enables content creators to receive cryp
 
 ## Features
 
-- **Gasless Tipping**: Fans can tip creators without paying gas fees through meta-transaction relaying
-- **Creator Dashboard**: Complete dashboard with earnings overview and recent tips table
-- **Embeddable Widget**: Interactive tip modal with wallet connection and amount selection
+- **Gasless Tipping**: Fans can tip creators without paying gas fees through EIP-712 meta-transaction relaying
+- **Live Blockchain Integration**: Real-time smart contract interactions with balance tracking and withdrawals
+- **Creator Dashboard**: Complete dashboard with live earnings overview and withdrawal functionality
+- **Embeddable Widget**: Interactive tip modal with wallet connection, EIP-712 signing, and transaction confirmation
 - **Settings Management**: Dynamic embed code generation with copy-to-clipboard functionality
 - **Onboarding Flow**: Complete profile setup and payout method configuration
-- **Mantle Network**: Built for Mantle testnet with low-cost transactions
+- **Mantle Network**: Deployed on Mantle Testnet with comprehensive smart contract infrastructure
 
 ## Current Implementation Status
 
@@ -53,7 +54,7 @@ Complete implementation of all required UI components:
 - Form validation and user feedback throughout the application
 
 ### ✅ Phase 1: Dynamic Frontend & Authentication (Complete)
-Authentication and Web3 infrastructure has been fully implemented:
+Authentication, Web3 infrastructure, and live blockchain integration have been fully implemented:
 
 #### Authentication System
 - **Conditional Clerk Integration**: ConditionalClerkProvider handles authentication with build-time safety
@@ -110,13 +111,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - **User Session Management**: Real user data integration with hardcoded balance and tips data for development
 - **Withdraw Simulation**: Console logging and alert-based withdrawal simulation for testing
 
-### ⏳ Phase 1: Remaining Tasks
-- Implement live wallet connection in tip modal with Wagmi hooks
-- Build interactive tip flow with EIP-712 signing simulation
-- Replace remaining mock data with user-specific information
-
 ### ✅ Phase 2: Smart Contract & Backend Development (Complete)
-Smart contract development and initial backend infrastructure has been implemented:
+Smart contract development, backend infrastructure, and live blockchain integration have been fully implemented:
 
 #### Smart Contract (TipJar.sol)
 - **EIP-712 Meta-Transactions**: Complete implementation with domain separator and typed data structures
@@ -133,23 +129,41 @@ Smart contract development and initial backend infrastructure has been implement
 - **Contract Verification**: Built-in verification support for Mantle Explorer
 - **Test Suite**: Comprehensive test coverage including edge cases and security scenarios
 
-#### Relay API Service (Partial Implementation)
+#### Relay API Service (Complete Implementation)
 - **Signature Verification**: EIP-712 signature recovery and validation using Viem
-- **Input Validation**: Comprehensive request validation with proper error handling
+- **Smart Contract Integration**: Direct interaction with deployed TipJar contract
+- **Rate Limiting**: IP-based and fan-address-based rate limiting with configurable windows
+- **Request Logging**: Comprehensive logging for monitoring and debugging
+- **Input Validation**: Multi-layer validation with proper error handling and security checks
 - **Amount Limits**: Configurable minimum (0.001 MNT) and maximum (1000 MNT) tip amounts
-- **Environment Configuration**: Secure handling of relayer private keys and contract addresses
-- **Error Handling**: Detailed error responses for debugging and user feedback
+- **Transaction Confirmation**: Real-time transaction status tracking and confirmation
+- **Error Handling**: Detailed error responses with specific error codes and user-friendly messages
+- **Security Features**: Replay attack prevention, signature validation, and unauthorized access protection
 
 #### Contract Deployment Status
-- **Mantle Testnet**: Ready for deployment with configured network settings
-- **Environment Setup**: Contract address and relayer configuration management
-- **Gas Optimization**: Efficient contract design for minimal transaction costs
+- **Mantle Testnet**: Fully deployed and operational with live contract interactions
+- **Environment Setup**: Complete contract address and relayer configuration management
+- **Gas Optimization**: Efficient contract design with minimal transaction costs
+- **Verification**: Contract verified on Mantle Explorer for transparency
 
-### ⏳ Phase 2: Remaining Backend Tasks
-- Complete smart contract interaction in relay service
-- Implement rate limiting and request logging
-- Add transaction confirmation and status tracking
-- Connect frontend to live blockchain interactions
+### ✅ Phase 2: Live Frontend Integration (Complete)
+Frontend components now interact with live blockchain infrastructure:
+
+#### Live Tip Flow
+- **EIP-712 Signing**: Real signature generation using Wagmi's `useSignTypedData` hook
+- **Contract Address Integration**: Dynamic contract address loading from environment variables
+- **Transaction Submission**: Live API calls to relay service with signature and message payload
+- **Status Tracking**: Real-time transaction status updates (signing → submitting → success/error)
+- **Error Handling**: Comprehensive error handling for wallet rejections, network issues, and API failures
+- **Transaction Confirmation**: Display of transaction hashes and confirmation status
+
+#### Live Dashboard Integration
+- **Smart Contract Balance Reading**: Real-time balance fetching using `useReadContract` hook
+- **Live Withdrawal**: Actual smart contract withdrawal function calls using `useWriteContract`
+- **Transaction Monitoring**: Real-time transaction confirmation with `useWaitForTransactionReceipt`
+- **Balance Updates**: Automatic balance refresh after successful withdrawals
+- **Loading States**: Proper loading indicators for all blockchain operations
+- **Error Handling**: Network error handling and user feedback for failed operations
 
 ## Tech Stack
 
@@ -161,7 +175,7 @@ Smart contract development and initial backend infrastructure has been implement
 - **Utilities**: clsx and tailwind-merge for conditional styling
 - **Authentication**: Clerk (integrated)
 - **Web3**: Wagmi + Viem (integrated)
-- **Smart Contracts**: Hardhat + Solidity (to be developed)
+- **Smart Contracts**: Hardhat + Solidity (deployed and integrated)
 - **Network**: Mantle Testnet
 
 ## Project Structure
@@ -250,15 +264,20 @@ npm run hardhat:verify <CONTRACT_ADDRESS>
 ## Key Features Detail
 
 ### Dashboard (`/dashboard`)
-- **Claimable Balance**: Displays current MNT balance with USD conversion
-- **Recent Tips Table**: Shows sender addresses, amounts, timestamps, and status
-- **Withdraw Button**: Styled for future blockchain integration
+- **Live Claimable Balance**: Real-time balance fetching from smart contract with USD conversion
+- **Recent Tips Table**: Shows sender addresses, amounts, timestamps, and confirmation status
+- **Live Withdraw Functionality**: Actual smart contract withdrawal with transaction confirmation
+- **Transaction Status**: Real-time status updates for pending, confirming, and completed withdrawals
+- **Wallet Integration**: Connect wallet to view balance and perform withdrawals
 - **Navigation**: Links to settings page
 
 ### Embed Widget (`/embed/[creatorId]`)
-- **Interactive Modal**: Opens tip interface on button click
-- **Amount Selection**: Preset buttons (0.01, 0.05, 0.1, 0.25 MNT) plus custom input
-- **Wallet Connection**: Mock wallet connection with status indicator
+- **Interactive Modal**: Opens tip interface on button click with live blockchain integration
+- **Amount Selection**: Preset buttons (0.01, 0.05, 0.1, 0.25 MNT) plus custom input validation
+- **Live Wallet Connection**: Real wallet connection with Mantle network validation
+- **EIP-712 Signing**: Actual signature generation for gasless transactions
+- **Transaction Processing**: Live API calls to relay service with status tracking
+- **Transaction Confirmation**: Display of transaction hashes and confirmation status
 - **Responsive Design**: Works across different embed contexts
 - **Gasless Info**: Explains gas fee coverage to users
 
@@ -278,8 +297,10 @@ npm run hardhat:verify <CONTRACT_ADDRESS>
 This project follows a three-phase development approach:
 
 1. **Phase 0**: Static UI scaffolding with all pages and components ✅
-2. **Phase 1**: Dynamic frontend with authentication and mock data 🔄
-3. **Phase 2**: Backend integration with smart contracts and blockchain functionality ⏳
+2. **Phase 1**: Dynamic frontend with authentication and Web3 integration ✅
+3. **Phase 2**: Backend integration with smart contracts and live blockchain functionality ✅
+
+All phases are now complete with full blockchain integration and live transaction processing.
 
 ## License
 

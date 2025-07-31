@@ -28,6 +28,7 @@ export default function EmbedPage({ params }: EmbedPageProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [tipStatus, setTipStatus] = useState<'idle' | 'signing' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState("")
+  const [transactionHash, setTransactionHash] = useState("")
   
   // Wagmi hooks for wallet connection and signing
   const { address, isConnected, chain } = useAccount()
@@ -72,14 +73,21 @@ export default function EmbedPage({ params }: EmbedPageProps) {
     switchChain({ chainId: MANTLE_TESTNET_ID })
   }
 
+  // Get contract address from environment
+  const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_TIP_JAR_CONTRACT_ADDRESS as `0x${string}`
+  
   // EIP-712 Domain and Types for meta-transaction
   const createTipTypedData = (fanAddress: string, creatorAddress: string, amount: string, nonce: number) => {
+    if (!CONTRACT_ADDRESS) {
+      throw new Error('Contract address not configured')
+    }
+    
     return {
       domain: {
         name: 'MantleTipJar',
         version: '1',
         chainId: MANTLE_TESTNET_ID,
-        verifyingContract: '0x1234567890123456789012345678901234567890' as `0x${string}` // Mock contract address
+        verifyingContract: CONTRACT_ADDRESS
       },
       types: {
         Tip: [
@@ -107,53 +115,76 @@ export default function EmbedPage({ params }: EmbedPageProps) {
       setTipStatus('signing')
       setErrorMessage("")
 
+      // Validate contract address is configured
+      if (!CONTRACT_ADDRESS) {
+        throw new Error('Contract address not configured. Please check environment variables.')
+      }
+
       // Generate unique nonce (in real app, this would come from backend)
       const nonce = Date.now()
       
       // Create EIP-712 typed data structure
       const typedData = createTipTypedData(address, params.creatorId, tipAmount, nonce)
-      
-      console.log('Creating EIP-712 typed data:', typedData)
 
       // Request signature from user
-      console.log('Requesting signature from user...')
       const signature = await signTypedData(typedData)
       
-      console.log('Signature received:', signature)
-      
-      // Simulate API call to relay service
+      // Move to submitting state after successful signature
       setTipStatus('submitting')
-      console.log('Submitting to relay service...')
       
-      // Mock API call with setTimeout to simulate network delay
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Simulate 90% success rate
-          if (Math.random() > 0.1) {
-            console.log('Tip transaction successful!')
-            console.log('Mock transaction hash: 0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890')
-            resolve(true)
-          } else {
-            reject(new Error('Network error: Unable to process transaction'))
-          }
-        }, 2000) // 2 second delay to simulate network request
+      // Make API call to relay service
+      const response = await fetch('/api/relay-tip', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fan: address,
+          creator: params.creatorId,
+          amount: tipAmount,
+          nonce: nonce,
+          signature: signature
+        })
       })
 
-      // Success state
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || `API Error: ${response.status}`)
+      }
+
+      // Success - display transaction details
       setTipStatus('success')
+      setTransactionHash(result.data.transactionHash)
+      console.log('Tip transaction successful:', result.data)
+      console.log('Transaction hash:', result.data.transactionHash)
       
       // Auto-close modal after success
       setTimeout(() => {
         setIsOpen(false)
         setTipAmount("")
         setTipStatus('idle')
+        setTransactionHash("")
         setIsProcessing(false)
-      }, 2000)
+      }, 4000) // Longer to show transaction hash
 
     } catch (error: any) {
       console.error('Tip failed:', error)
       setTipStatus('error')
-      setErrorMessage(error.message || 'Transaction failed')
+      
+      // Handle specific error types
+      if (error.message?.includes('User rejected')) {
+        setErrorMessage('Signature was rejected. Please try again.')
+      } else if (error.message?.includes('Contract address not configured')) {
+        setErrorMessage('Application not properly configured. Please contact support.')
+      } else if (error.message?.includes('network')) {
+        setErrorMessage('Network error. Please check your connection and try again.')
+      } else if (error.message?.includes('insufficient funds')) {
+        setErrorMessage('Insufficient funds in your wallet.')
+      } else {
+        setErrorMessage(error.message || 'Transaction failed. Please try again.')
+      }
+      
       setIsProcessing(false)
     }
   }
@@ -305,13 +336,23 @@ export default function EmbedPage({ params }: EmbedPageProps) {
                     )}
                     
                     {tipStatus === 'success' && (
-                      <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                          <span className="text-sm text-green-700 font-medium">
+                            Tip sent successfully! 🎉
+                          </span>
                         </div>
-                        <span className="text-sm text-green-700 font-medium">
-                          Tip sent successfully! 🎉
-                        </span>
+                        {transactionHash && (
+                          <div className="p-2 bg-gray-50 border border-gray-200 rounded-lg">
+                            <p className="text-xs text-gray-600 font-medium mb-1">Transaction Hash:</p>
+                            <p className="text-xs text-gray-800 font-mono break-all">
+                              {transactionHash}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
                     
