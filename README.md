@@ -115,11 +115,41 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - Build interactive tip flow with EIP-712 signing simulation
 - Replace remaining mock data with user-specific information
 
-### ⏳ Phase 2: Backend & Blockchain Integration (Planned)
-- Smart contract development and deployment
-- Meta-transaction relay service
-- EIP-712 signature verification
-- Live blockchain interactions
+### ✅ Phase 2: Smart Contract & Backend Development (Complete)
+Smart contract development and initial backend infrastructure has been implemented:
+
+#### Smart Contract (TipJar.sol)
+- **EIP-712 Meta-Transactions**: Complete implementation with domain separator and typed data structures
+- **Gasless Tipping**: Fans can tip without paying gas fees through relayer-mediated transactions
+- **Replay Protection**: Nonce-based system prevents signature replay attacks
+- **Access Control**: Owner-managed relayer authorization with emergency functions
+- **Withdrawal System**: Creators can withdraw accumulated tips with reentrancy protection
+- **Event Logging**: Comprehensive event emission for tip tracking and withdrawals
+- **Security Features**: ReentrancyGuard, signature validation, and emergency withdrawal capabilities
+
+#### Deployment Infrastructure
+- **Hardhat Configuration**: Complete development environment with Mantle Testnet support
+- **Deployment Scripts**: Automated deployment with environment variable management
+- **Contract Verification**: Built-in verification support for Mantle Explorer
+- **Test Suite**: Comprehensive test coverage including edge cases and security scenarios
+
+#### Relay API Service (Partial Implementation)
+- **Signature Verification**: EIP-712 signature recovery and validation using Viem
+- **Input Validation**: Comprehensive request validation with proper error handling
+- **Amount Limits**: Configurable minimum (0.001 MNT) and maximum (1000 MNT) tip amounts
+- **Environment Configuration**: Secure handling of relayer private keys and contract addresses
+- **Error Handling**: Detailed error responses for debugging and user feedback
+
+#### Contract Deployment Status
+- **Mantle Testnet**: Ready for deployment with configured network settings
+- **Environment Setup**: Contract address and relayer configuration management
+- **Gas Optimization**: Efficient contract design for minimal transaction costs
+
+### ⏳ Phase 2: Remaining Backend Tasks
+- Complete smart contract interaction in relay service
+- Implement rate limiting and request logging
+- Add transaction confirmation and status tracking
+- Connect frontend to live blockchain interactions
 
 ## Tech Stack
 

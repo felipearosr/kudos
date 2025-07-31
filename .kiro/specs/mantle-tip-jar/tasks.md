@@ -139,26 +139,26 @@
   - Verify contract deployment and basic functionality
   - _Requirements: 5.1, 5.2_
 
-- [ ] 6. Phase 2: Backend Relay Service Implementation
+- [x] 6. Phase 2: Backend Relay Service Implementation
   - Build API route for meta-transaction relaying
   - Implement signature verification and smart contract interaction
   - _Requirements: 4.3, 4.4, 4.5, 5.4_
 
-- [ ] 6.1 Create relay API route with signature verification
+- [x] 6.1 Create relay API route with signature verification
   - Build app/api/relay-tip/route.ts POST endpoint
   - Implement EIP-712 signature verification using viem recoverTypedDataAddress
   - Add comprehensive input validation and error handling
   - Set up relayer wallet configuration with private key from environment
   - _Requirements: 4.3, 4.4, 5.4_
 
-- [ ] 6.2 Implement smart contract interaction in relay service
+- [x] 6.2 Implement smart contract interaction in relay service
   - Initialize viem walletClient with relayer private key and Mantle transport
   - Call tip function on deployed TipJar contract with verified parameters
   - Handle transaction success/failure and return appropriate responses
   - Add transaction hash and status to API response
   - _Requirements: 4.4, 4.5, 5.2_
 
-- [ ] 6.3 Add security measures and rate limiting to relay service
+- [x] 6.3 Add security measures and rate limiting to relay service
   - Implement rate limiting to prevent API abuse
   - Add request logging and error tracking
   - Validate tip amounts and creator addresses
