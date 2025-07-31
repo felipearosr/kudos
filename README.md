@@ -94,9 +94,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - **Redirect URLs**: Post-authentication routing to onboarding flow
 
 #### Build Configuration
-- **Simplified Configuration**: Streamlined Next.js config with minimal experimental settings
+- **Optimized Webpack Configuration**: Enhanced bundle optimization with crypto/web3 library support
+- **Client-Side Fallbacks**: Comprehensive Node.js module fallbacks for browser compatibility (fs, net, tls, crypto, stream, http, https, os, url, zlib)
+- **Development Caching**: Intelligent filesystem cache optimization with conditional configuration, gzip compression, and build dependency tracking to reduce serialization warnings
+- **External Dependencies**: Optimized handling of utf-8-validate and bufferutil for better performance
 - **CSR Bailout Handling**: Configured `missingSuspenseWithCSRBailout: false` to handle client-side rendering edge cases
 - **Dynamic Rendering**: Pages use dynamic rendering to ensure proper authentication integration
+- **SWC Minification**: Enabled for improved build performance and smaller bundle sizes
 
 #### Authenticated Components
 - **Dashboard Integration**: Dashboard page uses Clerk's `useUser` hook with proper loading and authentication states
@@ -173,15 +177,45 @@ components/
 
 ## Getting Started
 
+### Frontend Development
+
 ```bash
 # Install dependencies
 npm install
 
 # Run development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start
+
+# Run linting
+npm run lint
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Smart Contract Development
+
+```bash
+# Compile smart contracts
+npm run hardhat:compile
+
+# Run contract tests
+npm run hardhat:test
+
+# Start local Hardhat node
+npm run hardhat:node
+
+# Deploy to Mantle Testnet
+npm run hardhat:deploy
+
+# Verify contract on Mantle Testnet
+npm run hardhat:verify <CONTRACT_ADDRESS>
+```
 
 ## Key Features Detail
 

@@ -107,32 +107,32 @@
   - Display success message and close modal after simulated completion
   - _Requirements: 4.1, 4.2, 4.6_
 
-- [ ] 5. Phase 2: Smart Contract Development and Deployment
+- [x] 5. Phase 2: Smart Contract Development and Deployment
   - Develop TipJar smart contract with EIP-712 meta-transaction support
   - Set up Hardhat development environment and deploy to Mantle Testnet
   - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 5.1 Set up Hardhat development environment
+- [x] 5.1 Set up Hardhat development environment
   - Install Hardhat, Solidity compiler, and deployment dependencies
   - Configure hardhat.config.js with Mantle Testnet network settings
   - Set up project structure for contracts, scripts, and tests
   - _Requirements: 6.5, 5.1_
 
-- [ ] 5.2 Develop TipJar smart contract with meta-transaction support
+- [x] 5.2 Develop TipJar smart contract with meta-transaction support
   - Write TipJar.sol contract with tip, getClaimableBalance, and withdraw functions
   - Implement EIP-712 domain separator and signature verification
   - Add access control for relayer-only tip function calls
   - Include replay protection with nonce tracking
   - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 5.3 Create comprehensive smart contract tests
+- [x] 5.3 Create comprehensive smart contract tests
   - Write Hardhat tests for all contract functions using Waffle matchers
   - Test normal operations, edge cases, and security scenarios
   - Verify EIP-712 signature validation and replay protection
   - Test access control and unauthorized access prevention
   - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 5.4 Deploy smart contract to Mantle Testnet
+- [x] 5.4 Deploy smart contract to Mantle Testnet
   - Create deployment script using Ethers.js v6
   - Deploy TipJar contract to Mantle Testnet with proper configuration
   - Save deployed contract address to environment variables
