@@ -14,14 +14,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { LoadingState, FullPageLoading, ButtonLoading } from "@/components/ui/loading"
+import { useToast, useSuccessToast, useErrorToast } from "@/components/ui/toast"
+import { parseError, logError, createErrorHandler } from "@/lib/error-handling"
+import { getEnvironmentConfig } from "@/lib/env-validation"
 import { Settings, Wallet, AlertCircle } from "lucide-react"
 import { useState, useEffect } from "react"
 
 // Force dynamic rendering to avoid build-time Clerk errors
 export const dynamic = 'force-dynamic'
 
-// TipJar contract configuration
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_TIP_JAR_CONTRACT_ADDRESS as `0x${string}`
+// Note: Metadata cannot be exported from client components
+// SEO is handled by middleware for protected routes
+
+// Get validated environment configuration
+const envConfig = getEnvironmentConfig()
+const CONTRACT_ADDRESS = envConfig.contract.tipJarAddress as `0x${string}`
 
 // TipJar contract ABI (only the functions we need)
 const TIP_JAR_ABI = [
@@ -80,6 +88,13 @@ export default function Dashboard() {
   const { address, isConnected } = useAccount()
   const [withdrawStatus, setWithdrawStatus] = useState<'idle' | 'pending' | 'confirming' | 'success' | 'error'>('idle')
   const [withdrawError, setWithdrawError] = useState("")
+  
+  // Toast notifications
+  const successToast = useSuccessToast()
+  const errorToast = useErrorToast()
+  
+  // Error handler
+  const handleError = createErrorHandler('Dashboard')
   
   // Read claimable balance from smart contract
   const { 
@@ -146,6 +161,7 @@ export default function Dashboard() {
       setWithdrawStatus('confirming')
     } else if (isConfirmed) {
       setWithdrawStatus('success')
+      successToast('Withdrawal successful! Funds transferred to your wallet.', 'Success')
       // Refetch balance after successful withdrawal
       refetchBalance()
       
@@ -155,21 +171,17 @@ export default function Dashboard() {
       }, 3000)
     } else if (writeError || confirmError) {
       setWithdrawStatus('error')
-      setWithdrawError(writeError?.message || confirmError?.message || 'Transaction failed')
+      const error = writeError || confirmError
+      const userError = handleError(error)
+      setWithdrawError(userError.message)
+      errorToast(userError.message, userError.title)
     }
-  }, [isWritePending, withdrawHash, isConfirming, isConfirmed, writeError, confirmError, refetchBalance])
+  }, [isWritePending, withdrawHash, isConfirming, isConfirmed, writeError, confirmError, refetchBalance, successToast, errorToast, handleError])
 
   const isWithdrawing = withdrawStatus !== 'idle'
 
   if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    )
+    return <FullPageLoading message="Loading dashboard..." />
   }
 
   if (!user) {

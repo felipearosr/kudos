@@ -4,11 +4,14 @@ import { WagmiProvider, createConfig, http } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { defineChain } from 'viem'
 import { injected, metaMask } from 'wagmi/connectors'
-import { walletConnect } from 'wagmi/connectors'
+import { getEnvironmentConfig } from '@/lib/env-validation'
 
-// Define Mantle Testnet
+// Get validated environment configuration
+const envConfig = getEnvironmentConfig()
+
+// Define Mantle Testnet using validated environment variables
 const mantleTestnet = defineChain({
-  id: 5003,
+  id: envConfig.web3.mantleChainId,
   name: 'Mantle Testnet',
   nativeCurrency: {
     decimals: 18,
@@ -17,7 +20,7 @@ const mantleTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: [process.env.NEXT_PUBLIC_MANTLE_RPC_URL || 'https://rpc.sepolia.mantle.xyz'],
+      http: [envConfig.web3.mantleRpcUrl],
     },
   },
   blockExplorers: {
@@ -29,21 +32,13 @@ const mantleTestnet = defineChain({
   testnet: true,
 })
 
-// Only include WalletConnect if project ID is properly configured
-const getConnectors = () => {
-  const connectors = [injected(), metaMask()]
-  
-  const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
-  if (projectId && projectId !== 'your_project_id_here' && projectId.trim() !== '') {
-    connectors.push(walletConnect({ projectId }))
-  }
-  
-  return connectors
-}
+// Configure connectors - using injected and MetaMask for now
+// WalletConnect can be added later when needed
+const connectors = [injected(), metaMask()]
 
 const config = createConfig({
   chains: [mantleTestnet],
-  connectors: getConnectors(),
+  connectors,
   transports: {
     [mantleTestnet.id]: http(),
   },

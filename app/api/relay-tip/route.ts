@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createWalletClient, http, parseEther, recoverTypedDataAddress, Address, createPublicClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
+import { getEnvironmentConfig } from '@/lib/env-validation';
 
-// Mantle Testnet configuration
+// Get validated environment configuration
+const envConfig = getEnvironmentConfig();
+
+// Mantle Testnet configuration using validated environment variables
 const mantleTestnet = {
-  id: 5003,
+  id: envConfig.web3.mantleChainId,
   name: 'Mantle Testnet',
   network: 'mantle-testnet',
   nativeCurrency: { name: 'MNT', symbol: 'MNT', decimals: 18 },
   rpcUrls: {
-    default: { http: ['https://rpc.sepolia.mantle.xyz'] },
-    public: { http: ['https://rpc.sepolia.mantle.xyz'] }
+    default: { http: [envConfig.web3.mantleRpcUrl] },
+    public: { http: [envConfig.web3.mantleRpcUrl] }
   }
 } as const;
 
@@ -18,8 +22,8 @@ const mantleTestnet = {
 const EIP712_DOMAIN = {
   name: 'MantleTipJar',
   version: '1',
-  chainId: 5003,
-  verifyingContract: process.env.NEXT_PUBLIC_TIP_JAR_CONTRACT_ADDRESS as Address
+  chainId: envConfig.web3.mantleChainId,
+  verifyingContract: envConfig.contract.tipJarAddress as Address
 } as const;
 
 const EIP712_TYPES = {
@@ -406,31 +410,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check environment variables
-    const relayerPrivateKey = process.env.RELAYER_PRIVATE_KEY;
-    const contractAddress = process.env.NEXT_PUBLIC_TIP_JAR_CONTRACT_ADDRESS;
-
-    if (!relayerPrivateKey) {
-      console.error('RELAYER_PRIVATE_KEY not configured');
-      return NextResponse.json(
-        {
-          error: 'SERVER_CONFIGURATION_ERROR',
-          message: 'Relay service not properly configured'
-        },
-        { status: 500 }
-      );
-    }
-
-    if (!contractAddress) {
-      console.error('TIP_JAR_CONTRACT_ADDRESS not configured');
-      return NextResponse.json(
-        {
-          error: 'SERVER_CONFIGURATION_ERROR',
-          message: 'Contract address not configured'
-        },
-        { status: 500 }
-      );
-    }
+    // Use validated environment configuration
+    const relayerPrivateKey = envConfig.contract.relayerPrivateKey;
+    const contractAddress = envConfig.contract.tipJarAddress;
 
     // Convert amount to wei
     const amountInWei = parseEther(tipRequest.amount);

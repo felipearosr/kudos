@@ -13,6 +13,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { ButtonLoading } from "@/components/ui/loading"
+import { useSuccessToast, useErrorToast } from "@/components/ui/toast"
+import { parseError, logError, createErrorHandler } from "@/lib/error-handling"
+import { getEnvironmentConfig } from "@/lib/env-validation"
 import { Heart, Wallet, Zap, AlertCircle } from "lucide-react"
 
 interface EmbedPageProps {
@@ -30,6 +34,16 @@ export default function EmbedPage({ params }: EmbedPageProps) {
   const [errorMessage, setErrorMessage] = useState("")
   const [transactionHash, setTransactionHash] = useState("")
   
+  // Toast notifications
+  const successToast = useSuccessToast()
+  const errorToast = useErrorToast()
+  
+  // Error handler
+  const handleError = createErrorHandler('EmbedPage')
+  
+  // Get validated environment configuration
+  const envConfig = getEnvironmentConfig()
+  
   // Wagmi hooks for wallet connection and signing
   const { address, isConnected, chain } = useAccount()
   const { connect, connectors, isPending } = useConnect()
@@ -37,8 +51,8 @@ export default function EmbedPage({ params }: EmbedPageProps) {
   const { switchChain } = useSwitchChain()
   const { signTypedData } = useSignTypedData()
   
-  // Mantle Testnet chain ID
-  const MANTLE_TESTNET_ID = 5003
+  // Mantle Testnet chain ID from environment
+  const MANTLE_TESTNET_ID = envConfig.web3.mantleChainId
   
   // Mock creator data - in real app this would be fetched based on creatorId
   const creatorData = {
@@ -73,8 +87,8 @@ export default function EmbedPage({ params }: EmbedPageProps) {
     switchChain({ chainId: MANTLE_TESTNET_ID })
   }
 
-  // Get contract address from environment
-  const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_TIP_JAR_CONTRACT_ADDRESS as `0x${string}`
+  // Get contract address from validated environment
+  const CONTRACT_ADDRESS = envConfig.contract.tipJarAddress as `0x${string}`
   
   // EIP-712 Domain and Types for meta-transaction
   const createTipTypedData = (fanAddress: string, creatorAddress: string, amount: string, nonce: number) => {
@@ -156,8 +170,7 @@ export default function EmbedPage({ params }: EmbedPageProps) {
       // Success - display transaction details
       setTipStatus('success')
       setTransactionHash(result.data.transactionHash)
-      console.log('Tip transaction successful:', result.data)
-      console.log('Transaction hash:', result.data.transactionHash)
+      successToast(`Tip of ${tipAmount} MNT sent successfully!`, 'Tip Sent')
       
       // Auto-close modal after success
       setTimeout(() => {
@@ -169,21 +182,13 @@ export default function EmbedPage({ params }: EmbedPageProps) {
       }, 4000) // Longer to show transaction hash
 
     } catch (error: any) {
-      console.error('Tip failed:', error)
+      logError(error, 'TipTransaction')
       setTipStatus('error')
       
-      // Handle specific error types
-      if (error.message?.includes('User rejected')) {
-        setErrorMessage('Signature was rejected. Please try again.')
-      } else if (error.message?.includes('Contract address not configured')) {
-        setErrorMessage('Application not properly configured. Please contact support.')
-      } else if (error.message?.includes('network')) {
-        setErrorMessage('Network error. Please check your connection and try again.')
-      } else if (error.message?.includes('insufficient funds')) {
-        setErrorMessage('Insufficient funds in your wallet.')
-      } else {
-        setErrorMessage(error.message || 'Transaction failed. Please try again.')
-      }
+      // Use the error handler to get user-friendly error message
+      const userError = handleError(error)
+      setErrorMessage(userError.message)
+      errorToast(userError.message, userError.title)
       
       setIsProcessing(false)
     }
